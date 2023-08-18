@@ -6,17 +6,20 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { updateUser } from "@/lib/actions/user.actions";
+import { useUploadThing } from "@/lib/uploadthing";
+import { isBase64Image } from "@/lib/utils";
 import userSchema from "@/lib/validations/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { ChangeEvent, use, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { ChangeEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Textarea } from "../ui/textarea";
-import { isBase64Image } from "@/lib/utils";
-import { useUploadThing } from "@/lib/uploadthing";
 
 interface Props {
   user: {
@@ -33,6 +36,9 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
   const [file, setFile] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
 
+  const pathname = usePathname();
+  const router = useRouter();
+
   const form = useForm({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -45,15 +51,30 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
     const imageBlob = values.profile_photo;
-    const hasImageChanged = isBase64Image(imageBlob) && file.length > 0;
+    const hasImageChanged = isBase64Image(imageBlob);
 
     if (hasImageChanged) {
       // upload image
       const imgRes = await startUpload(file);
-
       if (imgRes && imgRes[0].fileUrl) {
+        console.log(imgRes[0].fileUrl);
         values.profile_photo = imgRes[0].fileUrl;
       }
+    }
+
+    await updateUser({
+      userId: user.id,
+      username: values.username,
+      name: values.name,
+      bio: values.bio,
+      image: values.profile_photo,
+      path: pathname,
+    });
+
+    if (pathname === "/account") {
+      router.back();
+    } else {
+      router.push("/");
     }
   };
 
@@ -83,7 +104,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col justify-start gap-10"
+        className="mt-10 flex flex-col justify-start gap-10"
       >
         <FormField
           control={form.control}
@@ -119,6 +140,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   onChange={(e) => handleImage(e, field.onChange)}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -137,6 +159,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -155,6 +178,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -174,6 +198,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                   {...field}
                 />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
