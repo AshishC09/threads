@@ -57,7 +57,6 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       // upload image
       const imgRes = await startUpload(file);
       if (imgRes && imgRes[0].fileUrl) {
-        console.log(imgRes[0].fileUrl);
         values.profile_photo = imgRes[0].fileUrl;
       }
     }
@@ -91,7 +90,6 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       setFile(Array.from(e.target.files));
 
       if (!file.type.includes("image")) return;
-
       fileReader.onload = async (event) => {
         const imageDataUrl = event.target?.result?.toString() || "";
         fieldChange(imageDataUrl);
