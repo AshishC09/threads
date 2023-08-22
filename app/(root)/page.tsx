@@ -1,6 +1,7 @@
 import ThreadCard from "@/components/cards/ThreadCard";
 import { fetchThreads } from "@/lib/actions/threads.actions";
 import { currentUser } from "@clerk/nextjs";
+
 async function Home() {
   const loadedPosts = await fetchThreads(1, 30);
   const user = await currentUser();

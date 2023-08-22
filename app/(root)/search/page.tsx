@@ -1,3 +1,4 @@
+import UserCard from "@/components/cards/UserCard";
 import { fetchUser, fetchUsers } from "@/lib/actions/user.actions";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
@@ -24,7 +25,18 @@ const page = async () => {
         {results.users.length === 0 ? (
           <p className="no-result">No users</p>
         ) : (
-          <></>
+          <>
+            {results.users.map((user) => (
+              <UserCard
+                key={user.id}
+                id={`${user.id}`}
+                name={user.name}
+                username={user.username}
+                imageUrl={user.image}
+                personType={"User"}
+              />
+            ))}
+          </>
         )}
       </div>
     </section>

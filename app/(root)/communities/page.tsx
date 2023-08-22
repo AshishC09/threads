@@ -1,7 +1,7 @@
 const page = async () => {
   return (
     <section>
-      <div></div>
+      <h1 className="head-text mb-10">Communities</h1>
     </section>
   );
 };
