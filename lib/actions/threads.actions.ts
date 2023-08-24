@@ -8,20 +8,20 @@ import { connectToDB } from "../mongoose";
 interface createThreadParams {
   text: string;
   author: string;
-  community: string | null;
+  communityId: string | null;
   path: string;
 }
 
 export async function createThread({
   text,
   author,
-  community,
+  communityId,
   path,
 }: createThreadParams) {
   try {
     await connectToDB();
 
-    const newThread = await Thread.create({ text, author, community });
+    const newThread = await Thread.create({ text, author, communityId });
     await User.findByIdAndUpdate(author, { $push: { threads: newThread._id } });
 
     revalidatePath(path);

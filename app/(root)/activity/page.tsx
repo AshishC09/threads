@@ -40,7 +40,7 @@ const Page = async () => {
             ))}
           </>
         ) : (
-          <p className="!text-base-regular textligh2">No activity yet</p>
+          <p className="!text-base-regular text-light-2">No activity yet</p>
         )}
       </section>
     </section>

@@ -17,10 +17,12 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Textarea } from "../ui/textarea";
+import { useOrganization } from "@clerk/nextjs";
 
 const PostThread = ({ userId }: { userId: string }) => {
   const pathname = usePathname();
   const router = useRouter();
+  const { organization } = useOrganization();
 
   const form = useForm({
     resolver: zodResolver(threadValidation),
@@ -34,7 +36,7 @@ const PostThread = ({ userId }: { userId: string }) => {
     await createThread({
       text: values.thread,
       author: userId,
-      community: null,
+      community: organization ? organization.id : null,
       path: pathname,
     });
 
